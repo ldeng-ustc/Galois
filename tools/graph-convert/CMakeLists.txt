@@ -46,3 +46,16 @@ install(TARGETS graph-convert-huge
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
   COMPONENT tools
 )
+
+add_executable(graph-convert-bin-huge graph-convert-bin-huge.cpp)
+target_link_libraries(graph-convert-bin-huge galois_shmem LLVMSupport)
+if (TARGET Boost::Boost)
+  target_link_libraries(graph-convert-bin-huge Boost::Boost)
+else()
+  target_link_libraries(graph-convert-bin-huge Boost::iostreams)
+endif()
+install(TARGETS graph-convert-bin-huge
+  EXPORT GaloisTargets
+  DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  COMPONENT tools
+)

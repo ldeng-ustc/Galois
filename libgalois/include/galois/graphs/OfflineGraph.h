@@ -348,6 +348,13 @@ class OfflineGraphWriter {
            (smallData ? sizeof(float) : sizeof(double)) * edge;
   }
 
+  void setEdgeNoData(uint64_t src, uint64_t offset, uint64_t dst) {
+    if (src)
+      offset += edgeOffsets[src - 1];
+    file.seekg(offsetOfDst(offset), std::ios_base::beg);
+    file.write(reinterpret_cast<char*>(&dst), sizeof(uint64_t));
+  }
+
   void setEdge32(uint64_t src, uint64_t offset, uint64_t dst, uint32_t val) {
     if (src)
       offset += edgeOffsets[src - 1];
@@ -421,6 +428,7 @@ public:
     } else {
       ver = 1;
     }
+    ver = 2;
     std::cout << " USING VERSION : " << ver << "\n";
     uint64_t etSize = 0; // smallData ? sizeof(float) : sizeof(double);
     file.seekg(0, std::ios_base::beg);
@@ -439,6 +447,10 @@ public:
       setEdge32(src, offset, dst, val);
     else
       setEdge64(src, offset, dst, val);
+  }
+
+  void setEdge(uint64_t src, uint64_t offset, uint64_t dst) {
+    setEdgeNoData(src, offset, dst);
   }
 
   void setEdgeSorted(uint64_t dst) { setEdge_sorted(dst); }
